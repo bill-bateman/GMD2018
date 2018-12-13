@@ -310,6 +310,7 @@ GameObject:
   - component: {fileID: 1101072222}
   - component: {fileID: 1101072223}
   - component: {fileID: 1101072224}
+  - component: {fileID: 1101072226}
   m_Layer: 0
   m_Name: Person
   m_TagString: Untagged
@@ -328,6 +329,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 568898243}
+  - {fileID: 1452786877}
   m_Father: {fileID: 1630853004}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -340,11 +342,11 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
-  m_Offset: {x: -0.00824213, y: 0.0094347}
+  m_Offset: {x: 0.0046681166, y: -0.7264502}
   serializedVersion: 2
-  m_Size: {x: 0.78637767, y: 1.5956526}
+  m_Size: {x: 0.54366446, y: 0.24782085}
 --- !u!50 &1101072224
 Rigidbody2D:
   serializedVersion: 4
@@ -358,13 +360,30 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0
   m_GravityScale: 1
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &1101072226
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1101072221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90d181efead69624998fe48cf90be8c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  input_module: {fileID: 581887997}
+  speed: 3
+  jump_force: 350
+  player_animator: {fileID: 568898245}
+  player_renderer: {fileID: 568898244}
+  min_dist_to_ground: 100
 --- !u!1 &1277872626
 GameObject:
   m_ObjectHideFlags: 0
@@ -377,7 +396,7 @@ GameObject:
   - component: {fileID: 1277872628}
   m_Layer: 0
   m_Name: Platform
-  m_TagString: Untagged
+  m_TagString: ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -430,6 +449,49 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!1 &1452786876
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1452786877}
+  - component: {fileID: 1452786878}
+  m_Layer: 0
+  m_Name: Collider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1452786877
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1452786876}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1101072222}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!61 &1452786878
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1452786876}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_Offset: {x: 0.009101629, y: 0.004550934}
+  serializedVersion: 2
+  m_Size: {x: 0.763359, y: 1.5916023}
 --- !u!1 &1630853003
 GameObject:
   m_ObjectHideFlags: 0
@@ -438,7 +500,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 1630853004}
-  - component: {fileID: 1630853005}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -453,29 +514,13 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1630853003}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2, y: 0, z: 0}
+  m_LocalPosition: {x: -2, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1101072222}
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1630853005
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1630853003}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 90d181efead69624998fe48cf90be8c7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  input_module: {fileID: 581887997}
-  speed: 3
-  jump_force: 350
-  player_animator: {fileID: 568898245}
-  player_renderer: {fileID: 568898244}
 --- !u!1 &1926583669
 GameObject:
   m_ObjectHideFlags: 0
