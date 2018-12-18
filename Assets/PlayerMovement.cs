@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerMovement : MonoBehaviour {
 
@@ -12,16 +13,38 @@ public class PlayerMovement : MonoBehaviour {
 	public SpriteRenderer player_renderer;
 	public float min_dist_to_ground = 0.5f;
 
+	public Text sign_prompt;
+	public GameObject sign_popup;
+	public Text sign_text;
+
 	private Rigidbody2D rb;
 	private bool is_on_ground, old_ground;
 	private bool jumped;
 	private bool in_vines, is_climbing;
+	private bool in_sign, reading_sign;
+
+	private string[] sign_text_array = {
+		"Use the left and right arrow keys to move and the spacebar to jump.",
+		"Use the up and down arrow keys to climb on vines.",
+		"Never gonna give you up, never gonna let you down.",
+		"BEWARE OF BEAR"
+	};
 
 	// Use this for initialization
 	void Start () {
 		rb = GetComponent<Rigidbody2D> ();
-		is_on_ground = jumped = in_vines = is_climbing = false;
+		is_on_ground = jumped = in_vines = is_climbing = in_sign = reading_sign = false;
 		old_ground = true; //fall to ground at start
+		sign_prompt.enabled = false;
+		sign_popup.SetActive(false);
+	}
+
+	private string position_to_string_text(Vector3 p) {
+		if (p.x < 2 && p.y < 3) return sign_text_array[0]; //movement / jump sign
+		if (p.x > 5 && p.x < 10) return sign_text_array[1]; //climbing sign 
+		if (p.x < -4 && p.y > 18) return sign_text_array[2]; //troll sign
+		if (p.x > 20) return sign_text_array[3]; //bear sign
+		return ":>";
 	}
 
 	//called on entering collision (where one of the 2 objects must have isTrigger checked)
@@ -31,6 +54,9 @@ public class PlayerMovement : MonoBehaviour {
 			is_on_ground = true;
 		} else if (other.tag == "climbable") {
 			in_vines = true;
+		} else if (other.tag == "sign") {
+			in_sign = true;
+			sign_text.text = position_to_string_text(transform.position);
 		}
 	}
 
@@ -42,6 +68,8 @@ public class PlayerMovement : MonoBehaviour {
 			in_vines = is_climbing = false;
 			player_animator.SetBool("is_climbing", false);
 			rb.gravityScale = 1.0f;
+		} else if (other.tag == "sign") {
+			in_sign = false; reading_sign = false;
 		}
 	}
 
@@ -65,6 +93,7 @@ public class PlayerMovement : MonoBehaviour {
 			player_animator.SetBool("is_walking", false);
 		}
 
+		bool _jump = input_module.get_jump();
 		if (is_on_ground) {
 			if (!old_ground) {
 				//just landed
@@ -74,7 +103,7 @@ public class PlayerMovement : MonoBehaviour {
 			}
 
 			//perform jump
-			if (!jumped && input_module.get_jump ()) {
+			if (!jumped && _jump) {
 				jumped = true;
 				is_on_ground = false; old_ground = true;
 				Vector3 up = new Vector3 (0, 1);
@@ -116,5 +145,12 @@ public class PlayerMovement : MonoBehaviour {
 		}
 
 		old_ground = is_on_ground;
+
+		//signs
+		if (in_sign && !reading_sign) reading_sign = input_module.is_pressing_enter();
+		sign_prompt.enabled = in_sign && !reading_sign; //display sign prompt
+
+		//display sign text
+		sign_popup.SetActive(in_sign && reading_sign);
 	}
 }

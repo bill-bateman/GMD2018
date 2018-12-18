@@ -6,7 +6,7 @@ public class InputModule : MonoBehaviour {
 
 	//movement variables
 	private float movement;
-	private bool btn_jump, btn_left, btn_right, btn_up, btn_down;
+	private bool btn_jump, btn_left, btn_right, btn_up, btn_down, btn_enter;
 
 	//keyboard bindings
 	private KeyCode keyboard_jump_button = KeyCode.Space;
@@ -14,6 +14,7 @@ public class InputModule : MonoBehaviour {
 	private KeyCode keyboard_movement_right = KeyCode.RightArrow;
 	private KeyCode keyboard_movement_up = KeyCode.UpArrow;
 	private KeyCode keyboard_movement_down = KeyCode.DownArrow;
+	private KeyCode keyboard_enter = KeyCode.Return;
 
 
 	// Getter functions
@@ -32,6 +33,7 @@ public class InputModule : MonoBehaviour {
 	public bool is_pressing_up() { return btn_up; }
 	public bool is_pressing_down() { return btn_down; }
 	public bool is_pressing_climb_button() { return btn_up ^ btn_down; }
+	public bool is_pressing_enter() { return btn_enter; }
 
 	public float get_movement() { return movement; }
 	public int get_climbing_movement() { if (btn_up && !btn_down) {return 1;} else if (btn_down) {return -1;} else {return 0;} } 
@@ -50,6 +52,7 @@ public class InputModule : MonoBehaviour {
 		btn_right = Input.GetKey (keyboard_movement_right);
 		btn_up = Input.GetKey (keyboard_movement_up);
 		btn_down = Input.GetKey (keyboard_movement_down);
+		btn_enter = Input.GetKey(keyboard_enter);
 
 		//left-right movement
 		if (btn_left ^ btn_right) {
@@ -59,6 +62,6 @@ public class InputModule : MonoBehaviour {
 		}
 
 		//jump
-		btn_jump = (Input.GetKeyDown(keyboard_jump_button));
+		if (!btn_jump) btn_jump = (Input.GetKeyDown(keyboard_jump_button));
 	}
 }
