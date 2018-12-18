@@ -26,7 +26,7 @@ public class PlayerMovement : MonoBehaviour {
 	private string[] sign_text_array = {
 		"Use the left and right arrow keys to move and the spacebar to jump.",
 		"Use the up and down arrow keys to climb on vines.",
-		"Never gonna give you up, never gonna let you down.",
+		"There's no prize (´･ω･`) ",
 		"BEWARE OF BEAR"
 	};
 
@@ -44,7 +44,7 @@ public class PlayerMovement : MonoBehaviour {
 		if (p.x > 5 && p.x < 10) return sign_text_array[1]; //climbing sign 
 		if (p.x < -4 && p.y > 18) return sign_text_array[2]; //troll sign
 		if (p.x > 20) return sign_text_array[3]; //bear sign
-		return ":>";
+		return "OOPSIE WOOPSIE!! Uwu We made a fucky wucky!! A wittle fucko boingo!";
 	}
 
 	//called on entering collision (where one of the 2 objects must have isTrigger checked)
