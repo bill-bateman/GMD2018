@@ -57,6 +57,8 @@ public class PlayerMovement : MonoBehaviour {
 		} else if (other.tag == "sign") {
 			in_sign = true;
 			sign_text.text = position_to_string_text(transform.position);
+		} else if (other.tag == "bear_zone") {
+			//TODO change music and alert bear
 		}
 	}
 
