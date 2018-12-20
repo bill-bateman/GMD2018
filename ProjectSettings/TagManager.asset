@@ -8,6 +8,7 @@ TagManager:
   - climbable
   - sign
   - bear_zone
+  - bear
   layers:
   - Default
   - TransparentFX

@@ -6,6 +6,8 @@ using UnityEngine.UI;
 public class PlayerMovement : MonoBehaviour {
 
 	public InputModule input_module;
+	public GameObject spawn_point;
+	public BearMovement bear_script;
 	public float speed;
 	public float climb_speed;
 	public float jump_force = 500.0f;
@@ -17,11 +19,20 @@ public class PlayerMovement : MonoBehaviour {
 	public GameObject sign_popup;
 	public Text sign_text;
 
+	public AudioSource background_music;
+	public AudioClip forest_music;
+	public AudioClip bear_music;
+	public AudioClip death_music;
+
 	private Rigidbody2D rb;
 	private bool is_on_ground, old_ground;
 	private bool jumped;
 	private bool in_vines, is_climbing;
 	private bool in_sign, reading_sign;
+	private bool bear_mode;
+	private bool is_dying;
+
+	private float dying_counter;
 
 	private string[] sign_text_array = {
 		"Use the left and right arrow keys to move and the spacebar to jump.",
@@ -33,10 +44,12 @@ public class PlayerMovement : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		rb = GetComponent<Rigidbody2D> ();
-		is_on_ground = jumped = in_vines = is_climbing = in_sign = reading_sign = false;
+		is_on_ground = jumped = in_vines = is_climbing = in_sign = reading_sign = bear_mode = is_dying = false;
 		old_ground = true; //fall to ground at start
 		sign_prompt.enabled = false;
 		sign_popup.SetActive(false);
+
+		transform.position = spawn_point.transform.position;
 	}
 
 	private string position_to_string_text(Vector3 p) {
@@ -45,6 +58,36 @@ public class PlayerMovement : MonoBehaviour {
 		if (p.x < -4 && p.y > 18) return sign_text_array[2]; //troll sign
 		if (p.x > 20) return sign_text_array[3]; //bear sign
 		return "OOPSIE WOOPSIE!! Uwu We made a fucky wucky!! A wittle fucko boingo!";
+	}
+
+	public bool in_bear_zone() { return bear_mode; }
+	public float get_x() { return transform.position.x; }
+	public bool is_dead() { return is_dying; }
+
+	private void reset_on_death() {
+		transform.position = spawn_point.transform.position;
+
+		//reset bear
+		bear_mode = false;
+		bear_script.reset_on_player_death();
+
+		//reset music
+		background_music.clip = forest_music;
+		background_music.Play();
+
+		//reset animation stuff
+		is_on_ground = jumped = in_vines = is_climbing = in_sign = reading_sign = bear_mode = is_dying = false;
+		old_ground = true; //fall to ground at start
+		player_animator.SetBool ("is_walking", false);
+		player_animator.SetBool ("is_falling", true);
+		player_animator.SetBool ("is_jumping", false);
+		player_animator.SetBool ("is_climbing", false);
+		player_animator.SetBool ("is_climbing_idle", false);
+
+		//not dying any more
+		player_renderer.color = Color.white;
+		player_animator.enabled = true;
+		is_dying = false;
 	}
 
 	//called on entering collision (where one of the 2 objects must have isTrigger checked)
@@ -57,8 +100,20 @@ public class PlayerMovement : MonoBehaviour {
 		} else if (other.tag == "sign") {
 			in_sign = true;
 			sign_text.text = position_to_string_text(transform.position);
-		} else if (other.tag == "bear_zone") {
-			//TODO change music and alert bear
+		} else if (other.tag == "bear_zone" && !bear_mode) {
+			bear_mode = true;
+
+			background_music.clip = bear_music;
+			background_music.Play();
+		} else if (other.tag == "bear") {
+			//DEATH
+			is_dying = true;
+			dying_counter = 3;
+			player_renderer.color = Color.red;
+			player_animator.enabled = false;
+
+			background_music.clip = death_music;
+			background_music.Play();
 		}
 	}
 
@@ -85,6 +140,14 @@ public class PlayerMovement : MonoBehaviour {
 	
 	// FixedUpdate is called at constant intervals
 	void FixedUpdate () {
+		if (is_dying) {
+			dying_counter -= Time.deltaTime;
+			rb.velocity = new Vector3(0, 0);
+			if (dying_counter < 0) {
+				reset_on_death();
+			} else return;
+		};
+
 		/*** Player motion ***/
 		if (input_module.is_moving ()) {
 			//horizontal movement
