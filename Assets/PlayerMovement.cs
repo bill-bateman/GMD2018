@@ -17,7 +17,7 @@ public class PlayerMovement : MonoBehaviour {
 
 	public Text sign_prompt;
 	public GameObject sign_popup;
-	public Text sign_text;
+	public TextCrawl sign_text_crawl;
 
 	public AudioSource background_music;
 	public AudioClip forest_music;
@@ -99,7 +99,6 @@ public class PlayerMovement : MonoBehaviour {
 			in_vines = true;
 		} else if (other.tag == "sign") {
 			in_sign = true;
-			sign_text.text = position_to_string_text(transform.position);
 		} else if (other.tag == "bear_zone" && !bear_mode) {
 			bear_mode = true;
 
@@ -212,7 +211,13 @@ public class PlayerMovement : MonoBehaviour {
 		old_ground = is_on_ground;
 
 		//signs
-		if (in_sign && !reading_sign) reading_sign = input_module.is_pressing_enter();
+		if (in_sign && !reading_sign) { 
+			reading_sign = input_module.is_pressing_enter(); 
+			if (reading_sign)  {
+				sign_popup.SetActive(true);
+				sign_text_crawl.ShowText(position_to_string_text(transform.position));
+			}
+		}
 		sign_prompt.enabled = in_sign && !reading_sign; //display sign prompt
 
 		//display sign text
