@@ -8,7 +8,7 @@ public class TextCrawl : MonoBehaviour
 {
 	public AudioSource audio_blip;
 
-	private string display_text;
+	private string display_text = " ";
 	private int char_count;
 
 
@@ -22,8 +22,6 @@ public class TextCrawl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		Debug.Log(char_count);
-		Debug.Log(display_text);
 		char_count++;
 		if (char_count > display_text.Length) {
 			char_count = display_text.Length;

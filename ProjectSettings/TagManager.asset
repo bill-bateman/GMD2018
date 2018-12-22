@@ -9,6 +9,8 @@ TagManager:
   - sign
   - bear_zone
   - bear
+  - dog
+  - person
   layers:
   - Default
   - TransparentFX
