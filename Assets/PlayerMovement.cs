@@ -24,6 +24,11 @@ public class PlayerMovement : MonoBehaviour {
 	public AudioClip bear_music;
 	public AudioClip death_music;
 
+	public AudioSource bear_fx;
+	public AudioSource fx_source;
+	public AudioClip walking_fx;
+	public AudioClip climbing_fx;
+
 	private Rigidbody2D rb;
 	private bool is_on_ground, old_ground;
 	private bool jumped;
@@ -33,6 +38,9 @@ public class PlayerMovement : MonoBehaviour {
 	private bool is_dying;
 
 	private float dying_counter;
+
+	private bool fx_walking;
+	private bool fx_climbing;
 
 	private string[] sign_text_array = {
 		"Use the left and right arrow keys to move and the spacebar to jump.",
@@ -104,15 +112,21 @@ public class PlayerMovement : MonoBehaviour {
 
 			background_music.clip = bear_music;
 			background_music.Play();
+
+			bear_fx.Play();
 		} else if (other.tag == "bear") {
 			//DEATH
-			is_dying = true;
-			dying_counter = 3;
-			player_renderer.color = Color.red;
-			player_animator.enabled = false;
+			if (!is_dying) {
+				is_dying = true;
+				dying_counter = 3;
+				player_renderer.color = Color.red;
+				player_animator.enabled = false;
 
-			background_music.clip = death_music;
-			background_music.Play();
+				background_music.clip = death_music;
+				background_music.Play();
+
+				bear_fx.Play();
+			}
 		}
 	}
 
@@ -153,8 +167,11 @@ public class PlayerMovement : MonoBehaviour {
 			transform.localPosition += new Vector3 (input_module.get_movement () * (speed * Time.deltaTime), 0); //control movement speed
 			player_renderer.flipX = input_module.get_movement()<0 ? true : false;
 			player_animator.SetBool ("is_walking", true);
+
+			fx_walking = true;
 		} else {
 			player_animator.SetBool("is_walking", false);
+			fx_walking = false;
 		}
 
 		bool _jump = input_module.get_jump();
@@ -164,6 +181,7 @@ public class PlayerMovement : MonoBehaviour {
 				jumped = false;
 				player_animator.SetBool ("is_jumping", false);
 				player_animator.SetBool ("is_falling", false);
+				fx_walking = true;
 			}
 
 			//perform jump
@@ -176,6 +194,7 @@ public class PlayerMovement : MonoBehaviour {
 
 		} 
 		if (!is_on_ground) {
+			fx_walking = false;
 			if (old_ground) {
 				//just jumped or fell
 				if (jumped) {
@@ -203,9 +222,11 @@ public class PlayerMovement : MonoBehaviour {
 			int c = input_module.get_climbing_movement();
 			rb.velocity = new Vector3(0, c * climb_speed * Time.deltaTime);
 			player_animator.SetBool("is_climbing_idle", c==0);
+			fx_climbing = c!=0;
 		} else {
 			rb.gravityScale = 1.0f;
 			player_animator.SetBool("is_climbing", false);
+			fx_climbing = false;
 		}
 
 		old_ground = is_on_ground;
@@ -222,5 +243,22 @@ public class PlayerMovement : MonoBehaviour {
 
 		//display sign text
 		sign_popup.SetActive(in_sign && reading_sign);
+
+		//fx
+		if (fx_climbing) {
+			if (!fx_source.loop || fx_source.clip != climbing_fx) {
+				fx_source.loop = true;
+				fx_source.clip = climbing_fx;
+				fx_source.Play();
+			}
+		} else if (fx_walking) {
+			if (!fx_source.loop || fx_source.clip != walking_fx) {
+				fx_source.loop = true;
+				fx_source.clip = walking_fx;
+				fx_source.Play();
+			}
+		} else {
+			fx_source.loop = false;
+		}
 	}
 }
