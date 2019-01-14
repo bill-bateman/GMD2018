@@ -126,6 +126,8 @@ public class PlayerMovement : MonoBehaviour {
 				background_music.Play();
 
 				bear_fx.Play();
+
+				fx_source.loop = false;
 			}
 		}
 	}
