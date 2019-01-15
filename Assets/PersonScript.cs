@@ -28,6 +28,11 @@ public class PersonScript : MonoBehaviour
 		index++;
 	}
 
+	public void NextTaskString(string s) {
+		speech_bubble.SetActive(true);
+		speech_text.ShowText(s);
+	}
+
     // Update is called once per frame
     void Update()
     {
