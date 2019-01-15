@@ -11,6 +11,8 @@ TagManager:
   - bear
   - dog
   - person
+  - portal
+  - point
   layers:
   - Default
   - TransparentFX

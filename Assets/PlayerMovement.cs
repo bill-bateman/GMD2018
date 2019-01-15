@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour {
 
@@ -28,6 +29,8 @@ public class PlayerMovement : MonoBehaviour {
 	public AudioSource fx_source;
 	public AudioClip walking_fx;
 	public AudioClip climbing_fx;
+
+	public string nextSceneName;
 
 	private Rigidbody2D rb;
 	private bool is_on_ground, old_ground;
@@ -75,14 +78,6 @@ public class PlayerMovement : MonoBehaviour {
 	private void reset_on_death() {
 		transform.position = spawn_point.transform.position;
 
-		//reset bear
-		bear_mode = false;
-		bear_script.reset_on_player_death();
-
-		//reset music
-		background_music.clip = forest_music;
-		background_music.Play();
-
 		//reset animation stuff
 		is_on_ground = jumped = in_vines = is_climbing = in_sign = reading_sign = bear_mode = is_dying = false;
 		old_ground = true; //fall to ground at start
@@ -96,6 +91,14 @@ public class PlayerMovement : MonoBehaviour {
 		player_renderer.color = Color.white;
 		player_animator.enabled = true;
 		is_dying = false;
+
+		//reset bear
+		bear_mode = false;
+		if (bear_script != null) bear_script.reset_on_player_death();
+
+		//reset music
+		background_music.clip = forest_music;
+		background_music.Play();
 	}
 
 	//called on entering collision (where one of the 2 objects must have isTrigger checked)
@@ -114,7 +117,7 @@ public class PlayerMovement : MonoBehaviour {
 			background_music.Play();
 
 			bear_fx.Play();
-		} else if (other.tag == "bear") {
+		} else if (other.tag == "bear" || other.tag == "point") {
 			//DEATH
 			if (!is_dying) {
 				is_dying = true;
@@ -125,10 +128,13 @@ public class PlayerMovement : MonoBehaviour {
 				background_music.clip = death_music;
 				background_music.Play();
 
-				bear_fx.Play();
+				if (other.tag == "bear") bear_fx.Play();
 
 				fx_source.loop = false;
 			}
+		} else if (other.tag == "portal") {
+			//next level
+			SceneManager.LoadScene(nextSceneName, LoadSceneMode.Single);
 		}
 	}
 
