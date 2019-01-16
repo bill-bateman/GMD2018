@@ -13,6 +13,7 @@ TagManager:
   - person
   - portal
   - point
+  - cave_fall
   layers:
   - Default
   - TransparentFX

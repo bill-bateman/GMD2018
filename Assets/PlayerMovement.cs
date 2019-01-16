@@ -30,6 +30,12 @@ public class PlayerMovement : MonoBehaviour {
 	public AudioClip walking_fx;
 	public AudioClip climbing_fx;
 
+	public AudioSource fall_music;
+	public AudioClip cave_intro;
+	public AudioClip cave_song;
+
+	public bool is_cave;
+
 	public string nextSceneName;
 
 	private Rigidbody2D rb;
@@ -61,6 +67,11 @@ public class PlayerMovement : MonoBehaviour {
 		sign_popup.SetActive(false);
 
 		transform.position = spawn_point.transform.position;
+
+		if (is_cave) {
+			background_music.clip = cave_intro;
+			background_music.Play();
+		}
 	}
 
 	private string position_to_string_text(Vector3 p) {
@@ -97,8 +108,13 @@ public class PlayerMovement : MonoBehaviour {
 		if (bear_script != null) bear_script.reset_on_player_death();
 
 		//reset music
-		background_music.clip = forest_music;
-		background_music.Play();
+		if (is_cave) {
+			background_music.clip = cave_intro;
+			background_music.Play();
+		} else {
+			background_music.clip = forest_music;
+			background_music.Play();
+		}
 	}
 
 	//called on entering collision (where one of the 2 objects must have isTrigger checked)
@@ -106,6 +122,12 @@ public class PlayerMovement : MonoBehaviour {
 		if (other.tag == "ground") {
 			old_ground = is_on_ground;
 			is_on_ground = true;
+
+			if (is_cave && fall_music.isPlaying && background_music.clip != cave_song) {
+				background_music.clip = cave_song;
+				background_music.loop = true;
+				background_music.Play();
+			}
 		} else if (other.tag == "climbable") {
 			in_vines = true;
 		} else if (other.tag == "sign") {
@@ -135,6 +157,9 @@ public class PlayerMovement : MonoBehaviour {
 		} else if (other.tag == "portal") {
 			//next level
 			SceneManager.LoadScene(nextSceneName, LoadSceneMode.Single);
+		} else if (other.tag == "cave_fall") {
+			fall_music.Play();
+			background_music.Stop();
 		}
 	}
 
@@ -161,6 +186,7 @@ public class PlayerMovement : MonoBehaviour {
 	
 	// FixedUpdate is called at constant intervals
 	void FixedUpdate () {
+
 		if (is_dying) {
 			dying_counter -= Time.deltaTime;
 			rb.velocity = new Vector3(0, 0);
