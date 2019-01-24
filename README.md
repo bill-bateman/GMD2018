@@ -1,22 +1,4 @@
-                                
-                                
-                  yy        yy  
-  yy              yyyyyyyyyyyy  
-  yy              yyMMyyyyMMyy  
-  yyyy          oo  yyyyyyyy    
-    yyyyyyyyyyyyoo  yy....yy    
-    yyyyyyyyyyyyyyoo  ....      
-    yyyyyyyyyyyyyyyyoo          
-    yyyyyyyyyyyyyyyyyy          
-      yyyyyyyyyyyyyyyyyy        
-        yyyy        yyyy        
-      yyyy            yy        
-    yyyy  oo          yyyy      
-      yyyy  oo      oo  yy      
-                                                                                                                     
-
-           DOG GAME
-
+DOG GAME
 
 To run game: open it.
 
