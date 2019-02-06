@@ -1,6 +1,7 @@
 DOG GAME
 
 To run game: open it.
+NOTE: The github repo does not include an executable, just the Unity project.
 
 Controls:
 -enter to start game and read signs
@@ -8,7 +9,7 @@ Controls:
 -space to jump
 -up and down to climb vines
 
-Theme: Friendship
+Theme: Friendship:
 What is man but dog's best friend?
 
 Contributors: Bill Bateman
